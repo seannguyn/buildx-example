@@ -111,4 +111,6 @@ jobs:
           docker image ls
 
           echo "========= Push image ========="
-          docker push ${{ vars.DOCKERHUB_USERNAME }}/multi-arch-app:${{ env.BUILD_TIME }}:${{ env.SHORT_SHA }}
+          IMAGE_FULL_NAME=${{ vars.DOCKERHUB_USERNAME }}/multi-arch-app:${{ env.BUILD_TIME }}:${{ env.SHORT_SHA }}
+          docker tag localimage:latest $IMAGE_FULL_NAME
+          docker push $IMAGE_FULL_NAME
