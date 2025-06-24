@@ -47,6 +47,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
+          sbom: true
+          provenance: mode=min
           tags: localimage:latest
           outputs: type=oci,dest=/tmp/localimage.tar
 
@@ -108,9 +110,12 @@ jobs:
         run: |
           echo "========= Load image ========="
           docker load < localimage.tar
+
+          echo "========= List image ========="
           docker image ls
 
           echo "========= Push image ========="
-          IMAGE_FULL_NAME=${{ vars.DOCKERHUB_USERNAME }}/multi-arch-app:${{ env.BUILD_TIME }}:${{ env.SHORT_SHA }}
+          IMAGE_FULL_NAME=${{ vars.DOCKERHUB_USERNAME }}/multi-arch-app:${{ env.BUILD_TIME }}-${{ env.SHORT_SHA }}
+          echo "IMAGE_FULL_NAME=$IMAGE_FULL_NAME"
           docker tag localimage:latest $IMAGE_FULL_NAME
           docker push $IMAGE_FULL_NAME
